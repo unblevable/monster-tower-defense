@@ -5,30 +5,26 @@ requirejs.config({
         domReady: '../lib/domReady',
         underscore: '../lib/underscore',
 
-        main: 'main'
+        canvas: 'canvas',
+        pixels: 'pixels'
     },
     shim: {
         'underscore': {
             exports: '_'
         }
     },
-    // urlArgs: 'bust=' + (new Date()).getTime()
+    urlArgs: 'bust=' + (new Date()).getTime()
 
 });
 
-require(['domReady!', 'main'], function (domReady, Main) {
+require(['domReady', 'canvas', 'pixels'], function (domReady, Canvas, Pixels) {
+    var hello = 'hello';
 
-    var canvasElement = document.getElementsByTagName('canvas')[0];
-        canvas = canvasElement.getContext('2d');
-        cw = canvasElement.offsetWidth;
-        ch = canvasElement.offsetHeight;
+    domReady(function () {
+        var canvas = new Canvas;
+        var pixels = new Pixels(canvas);
 
-        // scale canvas for retina displays
-        if(window.devicePixelRatio === 2) {
-            canvas.setAttribute('width', 1136);
-            canvas.setAttribute('height', 640);
-        }
-
-        main = (new Main()).run()
+        window.addEventListener('resize', canvas.resize, false);
+    });
 
 });
