@@ -24,7 +24,6 @@ define(function (require, exports, module) {
         this.canvas.height = this.ih;
 
         this.resize = function () {
-            console.log('resizing');
             this.ch = window.innerHeight;
             this.cw = this.ch * this.ratio;
 
@@ -43,4 +42,5 @@ define(function (require, exports, module) {
     }
 
     return Canvas;
+
 });
