@@ -17,23 +17,26 @@ define(function (require, exports, module) {
             return new Vector(-this.x, -this.y);
         };
 
-        this.add = function(operand) {
+        this.add = function (operand) {
             if (operand instanceof Vector) return new Vector(this.x + operand.x, this.y + operand.y);
             else return new Vector(this.x + operand, this.y + operand);
         };
 
-        this.subtract = function(operand) {
+        this.subtract = function (operand) {
             if (operand instanceof Vector) return new Vector(this.x - operand.x, this.y - operand.y);
             else return new Vector(this.x - operand, this.y - operand);
         };
 
-        this.dot = function(vector) {
+        this.dot = function (vector) {
             return this.x * vector.x + this.y * vector.y;
         };
 
-        this.perpendicular = function() {
+        this.perpendicular = function () {
             return new Vector(-this.y, this.x);
-        }
+        };
+
+        this.lerp = function () {
+        };
     };
 
     return Vector;

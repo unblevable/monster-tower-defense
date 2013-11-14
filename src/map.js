@@ -1,4 +1,4 @@
-define(function (require, exports, module) {
+define(function (require,exports, module) {
 
     var Map = function (canvas, config) {
         var Tile = require('tile');
@@ -25,6 +25,29 @@ define(function (require, exports, module) {
         [12, 13, 12, 71, 19, 43, 44, 18, 20, 20, 20, 20, 19, 15, 14, 17, 17, 17, 17, 17, 17, 17, 17, 16, 43, 44, g(), 21, 4, 4],
         [10, 11, 10, 11, 22, 43, 44, 21, 6, 7, 6, 7, 22, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 43, 44, g(), 21, 4, 4]];
 
+        var foreground = [
+            [,,,,,,,,,,,,,,,,,,,,,,,,,,,,,],
+            [,,,,,,,,,,,,,,,,,,,,,,,,,,,,,],
+            [,,,,,,,,,,,,,,,,,,,,,,,,,,,,,],
+            [,,,,,,,,,,,,,,,,,,,,,,,,,,,,,],
+            [,,,,,,,,,,,,,,,,,,,,,,,,,,,,,],
+            [,,,,,,,,,,,,,,,,,,,,,,,,,,,,,],
+            [,,,,,,,,,,,,,,,,,,,,,,,,,,,,,],
+            [,,,,,,,,,,,,,,,,,,,,,,,,,,,,,],
+            [,,,,,,,,,,,,,,,,,,,,,,,,,,,,,],
+            [,,,,,,,,,,,,,,,,,,,,,,,,,,,,,],
+            [,,,,,,,,,,,,,,,, 45, 47, 47, 47, 46,,,,,,,,],
+            [,,,,,,,,,,,,,,,, 48, 50, 50, 50, 49,,,,,,,,],
+            [,,,,,,,,,,,,,,,, 51, 52, 53, 54, 55,,,,,,,,],
+            [,,,,,,,,,,,,,,,, 56, 57, 58, 59, 60,,,,,,,,],
+            [,,,,,,,,,,,,,,,,,,,,,,,,,,,,,],
+            [,,,,,,,,,,,,,,,,,,,,,,,,,,,,,],
+            [,,,,,,,,,,,,,,,,,,,,,,,,,,,,,],
+            [,,,,,,,,,,,,,,,,,,,,,,,,,,,,,],
+            [,,,,,,,,,,,,,,,,,,,,,,,,,,,,,],
+            [,,,,,,,,,,,,,,,,,,,,,,,,,,,,,]]
+
+
         this.tileSize = 32;
         this.tilesInRow = 30;
         this.tilesInCol = 20;
@@ -32,22 +55,28 @@ define(function (require, exports, module) {
 
         this.tiles = []; while(this.tiles.push([]) < this.tilesInRow);
 
-        var tilesetBackgroundImage = new Image(),
-            tilesetForegroundImage = new Image();
+        var tilesetImage = new Image();
 
-        tilesetBackgroundImage.src = '../assets/tileset.png',
-        tilesetForegroundImage.src = '../assets/tileset.png';
+        tilesetImage.src = '../assets/tileset.png';
 
-        tilesetBackgroundImage.onload = function () {
+        tilesetImage.onload = function () {
             for (var x = 0; x < this.tilesInRow; x++) {
                 for (var y = 0; y < this.tilesInCol; y++) {
                     var tile = this.background[y][x],
-                    tileRow = Math.floor(tile / this.tilesInRowImage),
-                    tileCol = Math.floor(tile % this.tilesInRowImage);
-                    canvas.context.drawImage(tilesetBackgroundImage, tileCol * this.tileSize, tileRow * this.tileSize, this.tileSize, this.tileSize, x * this.tileSize, y * this.tileSize, this.tileSize, this.tileSize);
+                        foregroundTile = foreground[y][x],
+                        tileRow = Math.floor(tile / this.tilesInRowImage),
+                        foregroundTileRow = Math.floor(foregroundTile / this.tilesInRowImage),
+                        tileCol = Math.floor(tile % this.tilesInRowImage),
+                        foregroundTileCol = Math.floor(foregroundTile % this.tilesInRowImage);
+
+                    canvas.context.drawImage(tilesetImage, tileCol * this.tileSize, tileRow * this.tileSize, this.tileSize, this.tileSize, x * this.tileSize, y * this.tileSize, this.tileSize, this.tileSize);
+                    canvas.context.drawImage(tilesetImage, foregroundTileCol * this.tileSize, foregroundTileRow * this.tileSize, this.tileSize, this.tileSize, x * this.tileSize, y * this.tileSize, this.tileSize, this.tileSize);
 
                     var tileEntity = new Tile(this.background[y][x]);
-                    if(!(tileEntity.isCollidable)) this.tiles[x][y] = tileEntity;
+                    tileEntity.x = x * this.tileSize;
+                    tileEntity.y = y * this.tileSize;
+
+                    this.tiles[x][y] = tileEntity;
 
                     if (config.showWalkable && tileEntity.walkableBox !== { x:0, y:0, w:0, h:0 }) {
                         canvas.context.fillStyle = "rgba(" + Math.floor(Math.random() * 255) + ", 0, 0, 0.3)"
@@ -58,21 +87,20 @@ define(function (require, exports, module) {
         }.bind(this)
 
         function g() {
-            return Math.floor(Math.random() * 4)
+            return Math.floor(Math.random() * 4);
         };
 
-        // path data
+        // road data
         // todo: make into inner prototype
-        var startOffsetX = 5,
-            startOffsetY = 19,
-            endOffsetX = 6,
-            endOffsetY = 13;
-
-        this.pathStart = { x:this.tileSize * startOffsetX, y:this.tileSize * startOffsetY };
-        this.pathEnd = { x:this.tileSize * endOffsetX, y:this.tileSize * endOffsetY };
+        this.road = {
+            startDirection: 'up',
+            start: { x: 5 * this.tileSize + this.tileSize, y:19 * this.tileSize },
+            end: { x: 24 * this.tileSize + this.tileSize, y:19 * this.tileSize }
+        };
 
         this.pointToTile = function (point) {
-           return { x: Math.floor(point.x / this.tileSize), y: Math.floor(point.y / this.tileSize) };
+            var tile = this.tiles[Math.floor(point.x / this.tileSize)][Math.floor(point.y / this.tileSize)];
+            return tile;
         }.bind(this);
 
         // center point of tile

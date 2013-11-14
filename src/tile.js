@@ -47,7 +47,7 @@ define(function (require, exports, module) {
 
     // foreground
     // -----------------------------------
-    // top left roof                    47
+    // top left roof                    45
     // top right roof                   46
     // top middle roof                  47
     // middle left roof                 48
@@ -183,6 +183,33 @@ define(function (require, exports, module) {
                     this.isCollidable = false;
                     this.walkableBox = { x:0, y:0, w:20, h:32 };
                     break;
+                case 61:
+                    this.isCollidable = true;
+                    break;
+                case 62:
+                    this.isCollidable = true;
+                    break;
+                case 63:
+                    this.isCollidable = true;
+                    break;
+                case 64:
+                    this.isCollidable = true;
+                    break;
+                case 65:
+                    this.isCollidable = true;
+                    break;
+                case 66:
+                    this.isCollidable = true;
+                    break;
+                case 67:
+                    this.isCollidable = true;
+                    break;
+                case 68:
+                    this.isCollidable = true;
+                    break;
+                case 69:
+                    this.isCollidable = true;
+                    break;
                 default:
                     this.isCollidable = true;
                     this.placeableBox = { x:0, y:0, w:0, h:0 };
@@ -193,6 +220,14 @@ define(function (require, exports, module) {
 
         // init
         this.init(id);
+    };
+
+    // tile = { r: n, c: n }
+    Tile.toPoint = function (tile) {
+    };
+
+    // point = { x: n, y: n }
+    Tile.fromPoint = function (point) {
     };
 
     return Tile;

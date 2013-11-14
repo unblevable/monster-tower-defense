@@ -10,8 +10,8 @@ requirejs.config({
         tile: 'tile',
         sprite: 'sprite',
         vector: 'utils/vector',
-        astar: 'utils/astar'
-
+        astar: 'utils/astar',
+        waypoint: 'waypoint'
     },
     shim: {
         'underscore': {
@@ -22,7 +22,7 @@ requirejs.config({
 
 });
 
-require(['domReady', 'canvas', 'map', 'astar'], function (domReady, Canvas, Map, AStar) {
+require(['domReady', 'canvas', 'map', 'astar', 'waypoint', 'sprite'], function (domReady, Canvas, Map, AStar, Waypoint, Sprite) {
     var config = {
         showWalkable: false
     };
@@ -33,12 +33,8 @@ require(['domReady', 'canvas', 'map', 'astar'], function (domReady, Canvas, Map,
             aStar = new AStar(map);
 
         setTimeout(function () {
-            var pathTile = aStar.find();
-            canvas.context.fillStyle = 'rgba(0, 0, 255, 0.3)';
-            for(var i = 0; i < pathTile.length; i++) {
-                canvas.context.fillRect(pathTile[i].x, pathTile[i].y, map.tileSize, map.tileSize);
-            }
-        }, 1000);
+            var waypoint = new Waypoint(canvas, map);
+        }, 500);
 
         window.addEventListener('resize', canvas.resize, false);
         window.addEventListener('click', function (e) {
@@ -51,6 +47,7 @@ require(['domReady', 'canvas', 'map', 'astar'], function (domReady, Canvas, Map,
             e.preventDefault();
         });
         // window.addEventListener('keydown', start);
+
     });
 
 });

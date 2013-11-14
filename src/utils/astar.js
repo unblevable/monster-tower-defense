@@ -50,30 +50,34 @@ define(function (require, exports, module) {
         };
 
         function isWalkable(point) {
-            var tilePosition = map.pointToTile(point),
-                x = tilePosition.x,
-                y = tilePosition.y;
+            var tile = map.pointToTile(point),
+                x = tile.x,
+                y = tile.y;
 
             if(map.tiles[x][y]) return !(map.tiles[x][y].isCollidable) && map.tiles[x] !== null && map.tiles[x][y] !== null;
         };
 
-        function Node(point, parent) {
-            this.parent = parent;
+        function createNode(point, parent) {
+            var node = {
+                parent: parent,
 
-            this.index = point.x + point.y * mapW;
+                index: point.x + point.y * mapW,
 
-            this.x = point.x;
-            this.y = point.y;
+                x: point.x,
+                y: point.y,
 
-            this.f = 0;
-            this.g = 0;
+                f:0,
+                g:0
+            }
+
+            return node;
         };
 
         this.find = function () {
             console.log(map.tiles[23].length);
             console.log(map.tiles[23]);
-            var start = new Node({ x:map.pathStart.x, y:map.pathStart.y }, null),
-                end = new Node({ x:map.pathEnd.x, y:map.pathEnd.y }, null),
+            var start = createNode({ x:map.pathStart.x, y:map.pathStart.y }, null),
+                end = createNode({ x:map.pathEnd.x, y:map.pathEnd.y }, null),
                 searched = new Array(mapSize),
                 open = [start],
                 closed = [],
@@ -108,7 +112,7 @@ define(function (require, exports, module) {
                     neighbors = neighborsFunction({ x:currentNode.x, y:currentNode.y });
 
                     for (i = 0, j = neighbors.length; i < j; i++) {
-                        currentPath = new Node(neighbors[i], currentNode);
+                        currentPath = createNode(neighbors[i], currentNode);
                         if (!searched[path.index]) {
                             // cost of the route from the source
                             currentPath.g = currentNode.g + distanceFunction(neighbors[i], currentNode);
