@@ -1,7 +1,8 @@
-define(function (require,exports, module) {
+define(function (require, exports, module) {
 
-    var Map = function (canvas, config) {
-        var Tile = require('tile');
+    var Map = function (canvas, image, config) {
+        var Tile = require('tile'),
+            tilesetImage = image['map'];
 
         this.background = [
         [12, 13, 12, 13, 12, 13, 12, 13, 12, 13, 12, 13, 12, 13, 12, 13, 12, 13, 12, 13, 12, 13, 12, 13, 12, 13, 12, 13, 12, 13],
@@ -52,14 +53,9 @@ define(function (require,exports, module) {
         this.tilesInRow = 30;
         this.tilesInCol = 20;
         this.tilesInRowImage = 30;
-
         this.tiles = []; while(this.tiles.push([]) < this.tilesInRow);
 
-        var tilesetImage = new Image();
-
-        tilesetImage.src = '../assets/tileset.png';
-
-        tilesetImage.onload = function () {
+        this.render = function () {
             for (var x = 0; x < this.tilesInRow; x++) {
                 for (var y = 0; y < this.tilesInCol; y++) {
                     var tile = this.background[y][x],

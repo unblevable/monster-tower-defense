@@ -19,14 +19,47 @@
             display: block;
             margin: 0 auto;
             background: #fff;
+            image-rendering: optimizeSpeed;
+            image-rendering: -moz-crisp-edges;
+            image-rendering: -webkit-optimize-contrast;
+
+            image-rendering: -o-crisp-edges;
+            image-rendering: optimize-contrast;
+            -ms-interpolation-mode: nearest-neighbor;
+        }
+
+        #container {
+            position:relative
+        }
+
+        #background {
+            position: absolute;
+            z-index: 0;
+        }
+
+        #buffer {
+            position: absolute;
+            z-index:1;
+            background: transparent;
+            visibility: hidden;
+        }
+
+        #foreground {
+            position: absolute;
+            z-index: 2;
+            background: transparent;
         }
     </style>
 
     <script data-main="src/boot.js" src="lib/require.js"></script>
 </head>
 <body>
-    <canvas id="foreground" width="1136" height="640">
-        <p>Your browser does not support HTML5 canvas.</p>
-    </canvas>
+    <div id = "container">
+        <canvas id="background" width="1136" height="640"> </canvas>
+        <canvas id="buffer" width="1136" height="640"> </canvas>
+        <canvas id="foreground" width="1136" height="640">
+            <p>Your browser does not support HTML5 canvas.</p>
+        </canvas>
+    </div>
 </body>
 </html>

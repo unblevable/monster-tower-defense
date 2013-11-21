@@ -1,12 +1,12 @@
 define(function (require, exports, module) {
     var _ = require('underscore');
 
-    function Canvas () {
+    function Canvas (id) {
         this.userAgent = navigator.userAgent.toLowerCase();
         this.android = this.userAgent.indexOf('android') > -1 ? true : false;
         this.ios = (this.userAgent.indexOf('iphone') > -1 || this.userAgent.indexOf('ipad') > -1) ? true : false;
 
-        this.canvas = document.getElementsByTagName('canvas')[0];
+        this.canvas = document.getElementById(id);
         this.context = this.canvas.getContext('2d');
 
         this.iw = 1136;

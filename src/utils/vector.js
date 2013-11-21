@@ -27,6 +27,11 @@ define(function (require, exports, module) {
             else return new Vector(this.x - operand, this.y - operand);
         };
 
+        this.multiply = function (operand) {
+            if (operand instanceof Vector) return new Vector(this.x * operand.x, this.y - operand.y);
+            else return new Vector(this.x * operand, this.y * operand);
+        };
+
         this.dot = function (vector) {
             return this.x * vector.x + this.y * vector.y;
         };
