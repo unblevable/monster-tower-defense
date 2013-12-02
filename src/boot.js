@@ -25,7 +25,19 @@ requirejs.config({
 
 });
 
-require(['domReady', 'canvas', 'map', 'astar', 'waypoint', 'sprite', 'utils', 'reactor', 'enemy', 'vector'], function (domReady, Canvas, Map, AStar, Waypoint, Sprite, Utils, Reactor, Enemy, Vector) {
+require([
+    'domReady',
+    'canvas',
+    'map',
+    'astar',
+    'waypoint',
+    'sprite',
+    'utils',
+    'reactor',
+    'enemy',
+    'vector',
+    'menu'],
+    function (domReady, Canvas, Map, AStar, Waypoint, Sprite, Utils, Reactor, Enemy, Vector, Menu) {
     var config = {
         showWalkable: false
     },
@@ -36,6 +48,8 @@ require(['domReady', 'canvas', 'map', 'astar', 'waypoint', 'sprite', 'utils', 'r
     // load resources [CLASS]
         tilesetMap = new Image(),
         tilesetSprites = new Image(),
+        menuWidgets = new Image(),
+        tilesetIcons= new Image(),
 
         waypoints;
 
@@ -45,11 +59,12 @@ require(['domReady', 'canvas', 'map', 'astar', 'waypoint', 'sprite', 'utils', 'r
     this.next = 0;
 
     // keep track of number of images to load
-    var IMAGES_TO_LOAD = 2,
+    var IMAGES_TO_LOAD = 3,
         imagesLoaded = 0;
 
-    tilesetMap.src = '../assets/tileset.png';
-    tilesetSprites.src = '../assets/pokemon_kanto_alt.png';
+    tilesetMap.src = 'https://dl.dropboxusercontent.com/s/iu3ux6qs8u6cobr/tileset.png';
+    tilesetSprites.src = 'https://dl.dropboxusercontent.com/s/rgz6dq3s0dxjwgo/pokemon-kanto.png';
+    menuWidgets.src = 'https://dl.dropboxusercontent.com/s/37k21u74qsei5iz/menu-widgets.png';
 
     domReady(function () {
         var foreground = new Canvas('foreground'),
@@ -62,6 +77,9 @@ require(['domReady', 'canvas', 'map', 'astar', 'waypoint', 'sprite', 'utils', 'r
             reactor.fire('imageload');
         };
         tilesetSprites.onload = function () {
+            reactor.fire('imageload');
+        };
+        menuWidgets.onload = function () {
             reactor.fire('imageload');
         };
 
@@ -78,10 +96,10 @@ require(['domReady', 'canvas', 'map', 'astar', 'waypoint', 'sprite', 'utils', 'r
         var enemies = [];
 
         function preload () {
-            console.log(imagesLoaded);
             imagesLoaded++;
             if (imagesLoaded >= IMAGES_TO_LOAD) {
                 var map = new Map(background, { 'map': tilesetMap }, config),
+                    menu = new Menu(background, menuWidgets),
                     waypoint = new Waypoint(background, map);
                 waypoints = [];
 
@@ -90,15 +108,22 @@ require(['domReady', 'canvas', 'map', 'astar', 'waypoint', 'sprite', 'utils', 'r
                 waypoints = waypoint.list;
 
                 var pokemonOfTheDay = Math.floor(Math.random() * 8) + 1;
-                enemies.push(new Enemy(new Sprite(foreground, buffer, { 'sprites': tilesetSprites }, pokemonOfTheDay, new Vector(780, 632)), waypoints));
-                enemies.push(new Enemy(new Sprite(foreground, buffer, { 'sprites': tilesetSprites }, pokemonOfTheDay, new Vector(780, 632)), waypoints));
-                enemies.push(new Enemy(new Sprite(foreground, buffer, { 'sprites': tilesetSprites }, pokemonOfTheDay, new Vector(780, 632)), waypoints));
-                enemies.push(new Enemy(new Sprite(foreground, buffer, { 'sprites': tilesetSprites }, pokemonOfTheDay, new Vector(780, 632)), waypoints));
-                enemies.push(new Enemy(new Sprite(foreground, buffer, { 'sprites': tilesetSprites }, pokemonOfTheDay, new Vector(780, 632)), waypoints));
-                enemies.push(new Enemy(new Sprite(foreground, buffer, { 'sprites': tilesetSprites }, pokemonOfTheDay, new Vector(780, 632)), waypoints));
-                enemies.push(new Enemy(new Sprite(foreground, buffer, { 'sprites': tilesetSprites }, pokemonOfTheDay, new Vector(780, 632)), waypoints));
-                enemies.push(new Enemy(new Sprite(foreground, buffer, { 'sprites': tilesetSprites }, pokemonOfTheDay, new Vector(780, 632)), waypoints));
-                enemies.push(new Enemy(new Sprite(foreground, buffer, { 'sprites': tilesetSprites }, pokemonOfTheDay, new Vector(780, 632)), waypoints));
+                enemies.push(new Enemy(new Sprite(foreground, buffer, { 'sprites': tilesetSprites }, new Vector(780, 632), { id: pokemonOfTheDay }), waypoints));
+                enemies.push(new Enemy(new Sprite(foreground, buffer, { 'sprites': tilesetSprites }, new Vector(780, 632), { id: pokemonOfTheDay }), waypoints));
+                enemies.push(new Enemy(new Sprite(foreground, buffer, { 'sprites': tilesetSprites }, new Vector(780, 632), { id: pokemonOfTheDay }), waypoints));
+                enemies.push(new Enemy(new Sprite(foreground, buffer, { 'sprites': tilesetSprites }, new Vector(780, 632), { id: pokemonOfTheDay }), waypoints));
+                enemies.push(new Enemy(new Sprite(foreground, buffer, { 'sprites': tilesetSprites }, new Vector(780, 632), { id: pokemonOfTheDay }), waypoints));
+                enemies.push(new Enemy(new Sprite(foreground, buffer, { 'sprites': tilesetSprites }, new Vector(780, 632), { id: pokemonOfTheDay }), waypoints));
+                enemies.push(new Enemy(new Sprite(foreground, buffer, { 'sprites': tilesetSprites }, new Vector(780, 632), { id: pokemonOfTheDay }), waypoints));
+                enemies.push(new Enemy(new Sprite(foreground, buffer, { 'sprites': tilesetSprites }, new Vector(780, 632), { id: pokemonOfTheDay }), waypoints));
+                enemies.push(new Enemy(new Sprite(foreground, buffer, { 'sprites': tilesetSprites }, new Vector(780, 632), { id: pokemonOfTheDay }), waypoints));
+                enemies.push(new Enemy(new Sprite(foreground, buffer, { 'sprites': tilesetSprites }, new Vector(780, 632), { id: pokemonOfTheDay }), waypoints));
+                enemies.push(new Enemy(new Sprite(foreground, buffer, { 'sprites': tilesetSprites }, new Vector(780, 632), { id: pokemonOfTheDay }), waypoints));
+                enemies.push(new Enemy(new Sprite(foreground, buffer, { 'sprites': tilesetSprites }, new Vector(780, 632), { id: pokemonOfTheDay }), waypoints));
+                enemies.push(new Enemy(new Sprite(foreground, buffer, { 'sprites': tilesetSprites }, new Vector(780, 632), { id: pokemonOfTheDay }), waypoints));
+                enemies.push(new Enemy(new Sprite(foreground, buffer, { 'sprites': tilesetSprites }, new Vector(780, 632), { id: pokemonOfTheDay }), waypoints));
+                enemies.push(new Enemy(new Sprite(foreground, buffer, { 'sprites': tilesetSprites }, new Vector(780, 632), { id: pokemonOfTheDay }), waypoints));
+                enemies.push(new Enemy(new Sprite(foreground, buffer, { 'sprites': tilesetSprites }, new Vector(780, 632), { id: pokemonOfTheDay }), waypoints));
 
                 window.addEventListener('resize', function () {
                     foreground.resize();
@@ -140,7 +165,7 @@ require(['domReady', 'canvas', 'map', 'astar', 'waypoint', 'sprite', 'utils', 'r
 
             if (that.currentDelay > that.maxDelay) {
                 that.currentDelay = 0;
-                if (that.next < 9 ) {
+                if (that.next < enemies.length ) {
                     enemies[that.next].isActive = true;
                     that.next++;
                 }

@@ -17,19 +17,20 @@ define(function (require, exports, module) {
 
         if (window.devicePixelRatio === 2) {
             this.cw * 2;
-            this.ch * 2;
+            this.ch * 3;
         }
 
         this.canvas.width = this.iw;
         this.canvas.height = this.ih;
 
         this.resize = function () {
+            console.log(id);
             this.ch = window.innerHeight;
             this.cw = this.ch * this.ratio;
 
             if (this.android || this.ios) {
-                // document.body.style.height = (window.innerHeight + 50) + 'px';
-                document.body.style.height = (window.innerHeight) + 'px';
+                document.body.style.height = (window.innerHeight + 50) + 'px';
+                // document.body.style.height = (window.innerHeight) + 'px';
             }
 
             this.canvas.style.width = this.cw + 'px';
@@ -37,7 +38,7 @@ define(function (require, exports, module) {
 
             window.setTimeout(function () {
                 window.scrollTo(0, 1);
-            }, 1);
+            }, 2);
         }.bind(this);
     }
 

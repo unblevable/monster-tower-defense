@@ -11,9 +11,9 @@ define(function (require, exports, module) {
         // max hit points
         this.hp = 100;
         // current hit points
-        this.currentHp = this.Hp;
+        this.currentHp = this.hp;
         // movement speed
-        this.speed = 1;
+        this.speed = 1.0;
         // type; carries defensive strengths and weaknesses to other types
         this.type =  'normal';
         // status buffs or debuffs
@@ -29,7 +29,7 @@ define(function (require, exports, module) {
             var currentWaypoint = this.waypoints[this.waypoint];
             if (this.waypoint < this.waypoints.length && this.isActive) {
                 var difference = currentWaypoint.v.subtract(sprite.position);
-                if (difference.magnitude() < EPSILON ) currentWaypoint = this.waypoints[this.waypoint++];
+                if (difference.magnitude() < this.speed ) currentWaypoint = this.waypoints[this.waypoint++];
 
                 direction = currentWaypoint.v.subtract(sprite.position).unit();
 

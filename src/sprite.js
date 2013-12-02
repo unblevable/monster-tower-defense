@@ -1,6 +1,6 @@
 define(function (require, exports, module) {
 
-    var Sprite = function (canvas, buffer, image, id, start) {
+    var Sprite = function (canvas, buffer, image, position, options) {
 
         this.orientation = Sprite.UP_ANIMATION_KEY;
 
@@ -35,7 +35,7 @@ define(function (require, exports, module) {
             // offset for variety
             offset = Math.floor(Math.random() * 8) - 4;
 
-        this.position = start;
+        this.position = position;
 
         // buffers.push(canvas);
         // buffers.push(buffer);
@@ -61,7 +61,7 @@ define(function (require, exports, module) {
             buffers[currentBuffer].canvas.style.visibility = 'visible';
 
             buffers[1 - currentBuffer].context.clearRect(this.position.x - 8, this.position.y - 8, size + 16, size + 16);
-            buffers[currentBuffer].context.drawImage(tilesetSprites, this.orientation * size + frame * size, id * size, size, size, this.position.x + offset, this.position.y + offset, size, size);
+            buffers[currentBuffer].context.drawImage(tilesetSprites, this.orientation * size + frame * size, options.id * size, size, size, this.position.x + offset, this.position.y + offset, size, size);
 
             currentBuffer = 1 - currentBuffer;
         }.bind(this);
