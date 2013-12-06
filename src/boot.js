@@ -14,7 +14,8 @@ requirejs.config({
         waypoint: 'waypoint',
         reactor: 'utils/reactor',
         utils: 'utils/utils',
-        enemy: 'enemy'
+        enemy: 'enemy',
+        queue: 'utils/queue'
     },
     shim: {
         'underscore': {
@@ -36,8 +37,11 @@ require([
     'reactor',
     'enemy',
     'vector',
+    'queue',
+    'monster',
+    'tower',
     'menu'],
-    function (domReady, Canvas, Map, AStar, Waypoint, Sprite, Utils, Reactor, Enemy, Vector, Menu) {
+    function (domReady, Canvas, Map, AStar, Waypoint, Sprite, Utils, Reactor, Enemy, Vector, Queue, Monster, Tower, Menu) {
     var config = {
         showWalkable: false
     },
@@ -45,7 +49,10 @@ require([
         loop,
     // event hub for registering and firing events
         reactor = new Reactor(),
+    //  event queue
+        queue = new Queue(),
     // load resources [CLASS]
+
         tilesetMap = new Image(),
         tilesetSprites = new Image(),
         menuWidgets = new Image(),
@@ -54,9 +61,12 @@ require([
         waypoints;
 
     // wave
-    this.currentDelay = 0;;
+    this.currentDelay = 0;
     this.maxDelay = 0.25;
     this.next = 0;
+
+    // towers
+    var towers = [];
 
     // keep track of number of images to load
     var IMAGES_TO_LOAD = 3,
@@ -107,23 +117,16 @@ require([
                 waypoint.create();
                 waypoints = waypoint.list;
 
-                var pokemonOfTheDay = Math.floor(Math.random() * 8) + 1;
-                enemies.push(new Enemy(new Sprite(foreground, buffer, { 'sprites': tilesetSprites }, new Vector(780, 632), { id: pokemonOfTheDay }), waypoints));
-                enemies.push(new Enemy(new Sprite(foreground, buffer, { 'sprites': tilesetSprites }, new Vector(780, 632), { id: pokemonOfTheDay }), waypoints));
-                enemies.push(new Enemy(new Sprite(foreground, buffer, { 'sprites': tilesetSprites }, new Vector(780, 632), { id: pokemonOfTheDay }), waypoints));
-                enemies.push(new Enemy(new Sprite(foreground, buffer, { 'sprites': tilesetSprites }, new Vector(780, 632), { id: pokemonOfTheDay }), waypoints));
-                enemies.push(new Enemy(new Sprite(foreground, buffer, { 'sprites': tilesetSprites }, new Vector(780, 632), { id: pokemonOfTheDay }), waypoints));
-                enemies.push(new Enemy(new Sprite(foreground, buffer, { 'sprites': tilesetSprites }, new Vector(780, 632), { id: pokemonOfTheDay }), waypoints));
-                enemies.push(new Enemy(new Sprite(foreground, buffer, { 'sprites': tilesetSprites }, new Vector(780, 632), { id: pokemonOfTheDay }), waypoints));
-                enemies.push(new Enemy(new Sprite(foreground, buffer, { 'sprites': tilesetSprites }, new Vector(780, 632), { id: pokemonOfTheDay }), waypoints));
-                enemies.push(new Enemy(new Sprite(foreground, buffer, { 'sprites': tilesetSprites }, new Vector(780, 632), { id: pokemonOfTheDay }), waypoints));
-                enemies.push(new Enemy(new Sprite(foreground, buffer, { 'sprites': tilesetSprites }, new Vector(780, 632), { id: pokemonOfTheDay }), waypoints));
-                enemies.push(new Enemy(new Sprite(foreground, buffer, { 'sprites': tilesetSprites }, new Vector(780, 632), { id: pokemonOfTheDay }), waypoints));
-                enemies.push(new Enemy(new Sprite(foreground, buffer, { 'sprites': tilesetSprites }, new Vector(780, 632), { id: pokemonOfTheDay }), waypoints));
-                enemies.push(new Enemy(new Sprite(foreground, buffer, { 'sprites': tilesetSprites }, new Vector(780, 632), { id: pokemonOfTheDay }), waypoints));
-                enemies.push(new Enemy(new Sprite(foreground, buffer, { 'sprites': tilesetSprites }, new Vector(780, 632), { id: pokemonOfTheDay }), waypoints));
-                enemies.push(new Enemy(new Sprite(foreground, buffer, { 'sprites': tilesetSprites }, new Vector(780, 632), { id: pokemonOfTheDay }), waypoints));
-                enemies.push(new Enemy(new Sprite(foreground, buffer, { 'sprites': tilesetSprites }, new Vector(780, 632), { id: pokemonOfTheDay }), waypoints));
+                var pokemonOfTheDay = Math.floor(Math.random() * (8 - 1)) + 1;
+                var pokemonOfTheDay = 3;
+                var monster = new Monster(pokemonOfTheDay);
+                console.log(monster.speed);
+                enemies.push(new Enemy(new Sprite(foreground, buffer, { 'sprites': tilesetSprites }, new Vector(780, 632), { id: pokemonOfTheDay }), new Monster(pokemonOfTheDay), waypoints));
+                enemies.push(new Enemy(new Sprite(foreground, buffer, { 'sprites': tilesetSprites }, new Vector(780, 632), { id: pokemonOfTheDay }), new Monster(pokemonOfTheDay), waypoints));
+                enemies.push(new Enemy(new Sprite(foreground, buffer, { 'sprites': tilesetSprites }, new Vector(780, 632), { id: pokemonOfTheDay }), new Monster(pokemonOfTheDay), waypoints));
+                enemies.push(new Enemy(new Sprite(foreground, buffer, { 'sprites': tilesetSprites }, new Vector(780, 632), { id: pokemonOfTheDay }), new Monster(pokemonOfTheDay), waypoints));
+                enemies.push(new Enemy(new Sprite(foreground, buffer, { 'sprites': tilesetSprites }, new Vector(780, 632), { id: pokemonOfTheDay }), new Monster(pokemonOfTheDay), waypoints));
+                enemies.push(new Enemy(new Sprite(foreground, buffer, { 'sprites': tilesetSprites }, new Vector(780, 632), { id: pokemonOfTheDay }), new Monster(pokemonOfTheDay), waypoints));
 
                 window.addEventListener('resize', function () {
                     foreground.resize();
@@ -138,9 +141,27 @@ require([
                 window.addEventListener('touchend', function (e) {
                     e.preventDefault();
                 });
+                window.addEventListener('dblclick', function (e) {
+                    console.log('hi');
+                    var posx = 0,
+                        posy = 0;
+
+                    if (!e) var e = window.event;
+                    if (e.pageX || e.pageY) {
+                        posx = e.pageX;
+                        posy = e.pageY;
+                    } else if (e.clientX || e.clientY) {
+                        posx = e.clientX + document.body.scrollLeft + document.documentElement.scrollLeft;
+                        posy = e.clientY + document.body.scrollTop + document.documentElement.scrollTop;
+                    }
+
+                    var someId = 4;
+                    var someTower = new Tower(new Sprite(foreground, buffer, { 'sprites': tilesetSprites }, new Vector(posx - Sprite.size / 2, posy - Sprite.size / 2), { id: 4 }), new Monster(someId));
+                    towers.push(someTower);
+                });
                 // window.addEventListener('keydown', start);
 
-                map.render();
+                map.render()
 
                 // run();
                 loop = requestAnimationFrame(run);
@@ -182,15 +203,31 @@ require([
             draw();
         }
 
+        var buffers = [foreground, buffer],
+        currentBuffer = 0;
         function draw () {
             var i;
-            for (i = 0; i < enemies.length; i++) {
-                var enemy = enemies[i];
+            buffers[1 - currentBuffer].canvas.style.visibility = 'hidden';
+            buffers[currentBuffer].canvas.style.visibility = 'visible';
+            buffers = [foreground, buffer]
+            buffers[1 - currentBuffer].context.canvas.width = buffers[ 1 - currentBuffer].context.canvas.width;
+
+            for (j = 0; j < enemies.length; j++) {
+                var enemy = enemies[j];
 
                 if (enemy.isActive) {
-                    enemy.sprite.draw();
+                    enemy.sprite.draw(buffers[currentBuffer]);
                 }
             }
+
+            for (i = 0; i < towers.length; i++) {
+                var tower = towers[i];
+
+                tower.sprite.draw(buffers[currentBuffer]);
+                tower.drawRange(buffers[currentBuffer]);
+            }
+
+            currentBuffer = 1 - currentBuffer;
         }
     });
 });

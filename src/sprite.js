@@ -3,6 +3,7 @@ define(function (require, exports, module) {
     var Sprite = function (canvas, buffer, image, position, options) {
 
         this.orientation = Sprite.UP_ANIMATION_KEY;
+        this.size = 32;
 
         var Utils = require('utils'),
             Vector = require('vector'),
@@ -36,6 +37,7 @@ define(function (require, exports, module) {
             offset = Math.floor(Math.random() * 8) - 4;
 
         this.position = position;
+        this.options = options;
 
         // buffers.push(canvas);
         // buffers.push(buffer);
@@ -43,7 +45,7 @@ define(function (require, exports, module) {
         this.update = function () {
         }.bind(this);
 
-        this.draw = function () {
+        this.draw = function (c) {
             var delta = Date.now() - lastUpdateTime;
 
 
@@ -57,13 +59,15 @@ define(function (require, exports, module) {
 
             lastUpdateTime = Date.now();
 
-            buffers[1 - currentBuffer].canvas.style.visibility = 'hidden';
-            buffers[currentBuffer].canvas.style.visibility = 'visible';
+            // buffers[1 - currentBuffer].canvas.style.visibility = 'hidden';
+            // buffers[currentBuffer].canvas.style.visibility = 'visible';
 
-            buffers[1 - currentBuffer].context.clearRect(this.position.x - 8, this.position.y - 8, size + 16, size + 16);
-            buffers[currentBuffer].context.drawImage(tilesetSprites, this.orientation * size + frame * size, options.id * size, size, size, this.position.x + offset, this.position.y + offset, size, size);
+            // clear canvas
+            // buffers[1 - currentBuffer].context.canvas.width = buffers[ 1 - currentBuffer].context.canvas.width;
+            // buffers[currentBuffer].context.drawImage(tilesetSprites, this.orientation * size + frame * size, (options.id - 1) * size, size, size, this.position.x + offset, this.position.y + offset, size, size);
+            c.context.drawImage(tilesetSprites, this.orientation * size + frame * size, (options.id - 1) * size, size, size, this.position.x + offset, this.position.y + offset, size, size);
 
-            currentBuffer = 1 - currentBuffer;
+            // currentBuffer = 1 - currentBuffer;
         }.bind(this);
     };
 
@@ -77,6 +81,8 @@ define(function (require, exports, module) {
     Sprite.RIGHT_ANIMATION_KEY = 6;
 
     Sprite.ANIMATIONS_KEYS = 8;
+
+    Sprite.size = 32;
 
     return Sprite;
 
